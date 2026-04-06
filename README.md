@@ -1,6 +1,6 @@
 # Aldeia Nissi - Sistema de Gestão Social 🇦🇴
 
-![Banner](https://raw.githubusercontent.com/Jeova_Nissi/aldeia/main/app/src/assets/banner_readme.png)
+![Banner](src/assets/banner_readme.png)
 
 ## 📋 Sobre o Projeto
 
