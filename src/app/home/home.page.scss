@@ -1,27 +1,120 @@
-#container {
-  text-align: center;
-
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 50%;
-  transform: translateY(-50%);
+ion-content {
+  --background: #fdfdfd;
 }
 
-#container strong {
-  font-size: 20px;
-  line-height: 26px;
+.header-content {
+  background: var(--ion-color-primary);
+  padding: 10px 20px 25px 20px;
+  border-radius: 0;
+  box-shadow: 0 10px 30px rgba(230, 81, 0, 0.15);
+
+  .welcome-text {
+    margin-bottom: 20px;
+    h2 {
+      color: white;
+      font-weight: 800;
+      margin: 0;
+      font-size: 24px;
+    }
+    p {
+      color: rgba(255, 255, 255, 0.8);
+      margin: 5px 0 0 0;
+      font-size: 14px;
+    }
+  }
+
+  .filter-chips {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    padding-bottom: 5px;
+    &::-webkit-scrollbar { display: none; }
+
+    ion-chip {
+      margin: 0;
+      background: rgba(255, 255, 255, 0.15);
+      color: white;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      font-weight: 600;
+      font-size: 13px;
+      
+      &[color="secondary"] {
+        background: white;
+        color: var(--ion-color-primary);
+        border: none;
+      }
+    }
+  }
 }
 
-#container p {
-  font-size: 16px;
-  line-height: 22px;
+.prime-compact-card {
+  border-radius: 20px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.04);
+  margin-bottom: 15px;
+  border: 1px solid rgba(0,0,0,0.03);
+  background: white;
 
-  color: #8c8c8c;
+  .p-card-body {
+     padding: 12px 16px;
+  }
 
-  margin: 0;
+  .card-flexbox {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+  }
+
+  .card-left-info {
+    flex: 1;
+
+    .organic-tag-small {
+       font-size: 10px;
+       margin-bottom: 6px;
+       display: inline-block;
+    }
+
+    .card-main-title {
+       font-size: 18px;
+       font-weight: 800;
+       color: #333;
+       margin-bottom: 2px;
+    }
+
+    .card-subtitle-small {
+       font-size: 13px;
+       color: #888;
+       margin-bottom: 10px;
+       font-weight: 500;
+    }
+
+    .card-footer-info {
+      display: flex;
+      gap: 15px;
+      font-size: 12px;
+      color: #666;
+      font-weight: 600;
+
+      span {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        i { font-size: 10px; }
+      }
+    }
+  }
+
+  .card-avatar-end {
+    width: 60px;
+    height: 60px;
+    border-radius: 15px;
+    background-size: cover;
+    background-position: center;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    flex-shrink: 0;
+  }
 }
 
-#container a {
-  text-decoration: none;
+.card-container {
+  padding: 15px;
+  padding-bottom: 100px; /* Space for fixed footer */
 }

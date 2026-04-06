@@ -1,0 +1,86 @@
+:host ::ng-deep {
+  .user-management-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 1.5rem 1rem;
+
+    .header-info {
+      margin-bottom: 2rem;
+      
+      h3 {
+        font-size: 1.75rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+      }
+      
+      p {
+        color: var(--ion-color-medium);
+        font-size: 1rem;
+      }
+    }
+
+    /* FIX: Esconde o título repetido (labels auxiliares) no desktop */
+    .p-column-title {
+      display: none !important;
+    }
+
+    /* Estilo padrão da tabela */
+    .p-datatable {
+      border-radius: 8px;
+      overflow: hidden;
+      
+      .p-datatable-thead > tr > th {
+        background: #f8f9fa;
+        color: #495057;
+        font-weight: 600;
+        padding: 1rem;
+        border-bottom: 1px solid #dee2e6;
+      }
+
+      .p-datatable-tbody > tr {
+        background: #ffffff;
+        color: #495057;
+        transition: background 0.2s;
+
+        &:hover {
+          background: #f1f3f5;
+        }
+
+        td {
+          padding: 1rem;
+          border-bottom: 1px solid #dee2e6;
+        }
+      }
+    }
+  }
+
+  /* Exibe as labels apenas quando a tabela empilhar no celular */
+  @media screen and (max-width: 960px) {
+    .p-datatable {
+      .p-column-title {
+        display: inline-block !important;
+        font-weight: 700;
+        margin-right: 10px;
+        color: var(--ion-color-medium);
+      }
+
+      .p-datatable-tbody > tr > td {
+        display: flex;
+        align-items: center;
+        padding: 0.75rem 1rem !important;
+      }
+    }
+  }
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.p-error {
+  font-size: 0.8rem;
+  color: var(--ion-color-danger);
+  margin-top: 0.25rem;
+}

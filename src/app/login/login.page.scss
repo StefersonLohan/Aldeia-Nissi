@@ -1,0 +1,176 @@
+:host {
+  --primary-color: var(--aldeia-primary);
+  --bg-gradient: linear-gradient(135deg, var(--aldeia-primary) 0%, #3b82f6 100%);
+  --card-bg: rgba(255, 255, 255, 0.95);
+  --error-color: #ef4444;
+  --success-color: var(--aldeia-success);
+}
+
+.login-page {
+  --background: var(--bg-gradient);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.login-container {
+  max-width: 420px;
+  width: 90%;
+  margin: 0 auto;
+  padding: 2rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  animation: fadeIn 0.8s ease-out;
+}
+
+.logo-area {
+  text-align: center;
+  color: white;
+
+  .logo {
+    width: 64px;
+    height: 64px;
+    margin-bottom: 0.5rem;
+    filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1));
+  }
+
+  h1 {
+    font-size: 2rem;
+    font-weight: 800;
+    margin: 0;
+    letter-spacing: -0.025em;
+  }
+
+  p {
+    opacity: 0.85;
+    font-size: 0.925rem;
+    margin: 0;
+    font-weight: 500;
+  }
+}
+
+.login-card {
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  border-radius: 1rem;
+  overflow: hidden;
+
+  ::ng-deep .p-card {
+    background: var(--card-bg);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255,255,255,0.2);
+  }
+
+  .card-title {
+    padding: 1.5rem 1.5rem 0;
+    text-align: center;
+
+    h2 {
+      margin: 0;
+      color: #111827;
+      font-size: 1.5rem;
+      font-weight: 700;
+    }
+
+    span {
+      color: #6b7280;
+      font-size: 0.875rem;
+    }
+  }
+}
+
+.login-form {
+  padding: 1rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+
+  p-floatlabel {
+    width: 100%;
+  }
+
+  p-inputgroup {
+    width: 100%;
+    
+    ::ng-deep .p-inputtext {
+      width: 100%;
+      border-radius: 0 8px 8px 0;
+    }
+
+    ::ng-deep .p-inputgroup-addon {
+      border-radius: 8px 0 0 8px;
+      background: #f9fafb;
+      color: #6b7280;
+    }
+  }
+
+  .error-msg {
+    color: var(--error-color);
+    font-size: 0.75rem;
+    font-weight: 600;
+    margin-left: 0.5rem;
+  }
+}
+
+.login-actions {
+  margin-top: 0.5rem;
+}
+
+.full-width-btn {
+  ::ng-deep .p-button {
+    width: 100%;
+    border-radius: 8px;
+    font-weight: 600;
+    background: var(--success-color);
+    border-color: var(--success-color);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    transition: all 0.2s ease;
+
+    &:hover {
+      background: #3da35d;
+      border-color: #3da35d;
+      transform: translateY(-1px);
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    }
+
+    &:active {
+      transform: translateY(0);
+    }
+  }
+}
+
+.footer-links {
+  text-align: center;
+  padding: 0 1.5rem 1.5rem;
+  
+  a {
+    color: var(--primary-color);
+    text-decoration: none;
+    font-size: 0.875rem;
+    font-weight: 500;
+    transition: opacity 0.2s;
+
+    &:hover {
+      opacity: 0.8;
+      text-decoration: underline;
+    }
+  }
+}
+
+.version-info {
+  text-align: center;
+  color: rgba(255,255,255,0.7);
+  font-size: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}

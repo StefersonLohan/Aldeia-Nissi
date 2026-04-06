@@ -1,20 +1,96 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>
-      Blank
-    </ion-title>
+<ion-header class="ion-no-border">
+    <ion-toolbar color="primary">
+      <div style="display: flex; align-items: center; padding-left: 10px;">
+        <img src="assets/icon/logo.svg" style="height: 28px; width: auto; margin-right: 8px; filter: brightness(0) invert(1);">
+        <ion-title style="padding-left: 0;">Aldeia Nissi</ion-title>
+      </div>
+    <ion-buttons slot="end">
+      <ion-button>
+        <ion-icon slot="icon-only" name="search-outline"></ion-icon>
+      </ion-button>
+      <ion-button>
+        <ion-icon slot="icon-only" name="notifications-outline"></ion-icon>
+      </ion-button>
+      <ion-button (click)="logout()">
+        <ion-icon slot="icon-only" name="log-out-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
   </ion-toolbar>
+
+  <div class="header-content" style="background: var(--ion-color-primary); padding-bottom: 20px;">
+    <div class="welcome-text" style="padding: 0 20px;">
+       <h2 style="color: white; font-weight: 800; margin: 0; font-size: 24px;">Olá, {{ userName }}</h2>
+       <p style="color: rgba(255, 255, 255, 0.8); margin: 5px 0 15px 0; font-size: 14px;">Gestão Geral da Missão</p>
+    </div>
+    
+    <div class="filter-chips" style="display: flex; gap: 8px; overflow-x: auto; padding: 0 20px;">
+      <ion-chip [color]="selectedFilter === 'Todos' ? 'secondary' : 'light'" [outline]="selectedFilter !== 'Todos'" (click)="applyFilter('Todos')">Todos</ion-chip>
+      <ion-chip [color]="selectedFilter === 'Alunos' ? 'secondary' : 'light'" [outline]="selectedFilter !== 'Alunos'" (click)="applyFilter('Alunos')">Alunos</ion-chip>
+      <ion-chip [color]="selectedFilter === 'Viúvas' ? 'secondary' : 'light'" [outline]="selectedFilter !== 'Viúvas'" (click)="applyFilter('Viúvas')">Viúvas</ion-chip>
+      <ion-chip [color]="selectedFilter === 'Albinos' ? 'secondary' : 'light'" [outline]="selectedFilter !== 'Albinos'" (click)="applyFilter('Albinos')">Albinos</ion-chip>
+    </div>
+  </div>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">Blank</ion-title>
-    </ion-toolbar>
-  </ion-header>
+<ion-content>
+  <div class="card-container">
+    
+    <p-card *ngFor="let item of filteredItems" styleClass="prime-compact-card">
+      <div class="card-flexbox">
+        <div class="card-left-info">
+          <p-tag [value]="item.setor" severity="secondary" rounded="true" styleClass="organic-tag-small"></p-tag>
+          <div class="card-main-title">{{ item.nome }}</div>
+          <div class="card-subtitle-small">{{ item.subtitle }}</div>
+          
+          <div class="card-footer-info">
+            <span><i class="pi pi-map-marker"></i> {{ item.aldeia }}</span>
+            <span>
+               <i class="pi pi-circle-fill" [style.color]="item.info_color === 'success' ? '#2dd36f' : '#ffc409'"></i> 
+               {{ item.status }}
+            </span>
+          </div>
+          
+          <div class="card-actions" style="margin-top: 10px; display: flex; gap: 8px;">
+             <p-button icon="pi pi-qrcode" [rounded]="true" [text]="true" severity="success" size="small" (click)="$event.stopPropagation(); verQRCode(item)"></p-button>
+             <p-button icon="pi pi-pencil" [rounded]="true" [text]="true" size="small" (click)="$event.stopPropagation(); editAssistido(item)"></p-button>
+             <p-button icon="pi pi-trash" [rounded]="true" [text]="true" severity="danger" size="small" (click)="$event.stopPropagation(); deleteAssistido(item)"></p-button>
+          </div>
+        </div>
+        
+        <div class="card-avatar-end" [style.background-image]="'url(' + item.foto + ')'"></div>
+      </div>
+    </p-card>
 
-  <div id="container">
-    <strong>Ready to create an app?</strong>
-    <p>Start with Ionic <a target="_blank" rel="noopener noreferrer" href="https://ionicframework.com/docs/components">UI Components</a></p>
   </div>
+
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+    <ion-fab-button color="primary" routerLink="/cadastro">
+      <ion-icon name="add"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+
+  <!-- QR Code View Dialog -->
+  <p-dialog [(visible)]="showQRDialog" [modal]="true" [style]="{ width: '90vw', maxWidth: '400px' }" [maskStyle]="{'backdrop-filter': 'blur(5px)'}">
+    <ng-template pTemplate="header">
+       <div style="font-weight: 800; font-size: 18px; color: #333;">QR Code: {{ selectedAssistidoName }}</div>
+    </ng-template>
+    
+    <div style="text-align: center; padding: 20px 0;">
+       <div class="qr-frame-home" style="background: white; padding: 15px; display: inline-block; border-radius: 20px; border: 2px solid #f0f0f0; box-shadow: 0 10px 30px rgba(0,0,0,0.05);">
+          <qrcode [qrdata]="qrCodeData" [width]="240" [errorCorrectionLevel]="'M'"></qrcode>
+       </div>
+       
+       <div class="id-display-section" style="margin-top: 15px; background: #fef1e6; padding: 8px 12px; border-radius: 10px; display: inline-block; border: 1px dashed var(--ion-color-primary);">
+          <span style="font-size: 11px; color: #888; text-transform: uppercase; font-weight: 700; display: block; margin-bottom: 2px;">ID Permanente</span>
+          <code style="font-family: monospace; font-size: 13px; color: var(--ion-color-primary); font-weight: 700;">{{ qrCodeData }}</code>
+       </div>
+
+       <p style="color: #666; font-size: 14px; margin-top: 15px; padding: 0 20px;">Utilize este código para registrar a presença na portaria.</p>
+       
+       <div style="margin-top: 30px; display: flex; flex-direction: column; gap: 10px; padding: 0 10px;">
+          <p-button label="Compartilhar / Salvar" icon="pi pi-share-alt" [fluid]="true" severity="help" (click)="compartilharQRCode()"></p-button>
+          <p-button label="Fechar" icon="pi pi-times" [fluid]="true" [text]="true" (click)="showQRDialog = false"></p-button>
+       </div>
+    </div>
+  </p-dialog>
 </ion-content>

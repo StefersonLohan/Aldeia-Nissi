@@ -1,0 +1,41 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar color="primary">
+    <ion-title>Ponto Corporativo</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+   <div class="ponto-header">
+     <h2>Registro de Ponto Eletrônico</h2>
+     <p>Obrigatório selfie na hora do registro.</p>
+   </div>
+
+   <div class="user-profile-summary">
+      <ion-avatar>
+        <img src="https://i.pravatar.cc/150?img=11" />
+      </ion-avatar>
+      <h3>João Colaborador</h3>
+      <p>Assistente Social • Base Principal</p>
+   </div>
+
+   <div class="ponto-actions">
+      <div class="location-status success">
+        <ion-icon name="location"></ion-icon>
+        <span>GPS Ativo - Lat: -8.8390, Lon: 13.2894</span>
+      </div>
+
+      <div class="selfie-module">
+        <div class="camera-placeholder">
+           <ion-icon name="person"></ion-icon>
+           <p>Sem Foto. Tire uma selfie para validar o ponto.</p>
+        </div>
+        <ion-button expand="block" shape="round" color="tertiary" class="camera-btn">
+          <ion-icon slot="start" name="camera"></ion-icon> Validar com Selfie
+        </ion-button>
+      </div>
+
+      <ion-button expand="block" shape="round" color="secondary" size="large" class="punch-btn">
+         Registrar Ponto (14:32)
+      </ion-button>
+   </div>
+</ion-content>

@@ -1,0 +1,130 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/home"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Gestão de Usuários</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="openNew()" fill="outline">
+        <ion-icon name="add" slot="start"></ion-icon>
+        Novo Usuário
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="ion-padding">
+  <div class="user-management-container">
+    <div class="header-info">
+      <h3>Administradores e Colaboradores</h3>
+      <p>Gerencie quem tem acesso à plataforma e quais são seus papéis.</p>
+    </div>
+
+    <p-card styleClass="p-0 overflow-hidden shadow-2">
+      <p-table [value]="usuarios" [paginator]="true" [rows]="10" [responsiveLayout]="'scroll'"
+               responsiveLayout="stack" breakpoint="960px"
+               styleClass="p-datatable-sm p-datatable-striped"
+               [rowHover]="true">
+        <ng-template pTemplate="header">
+          <tr>
+            <th pSortableColumn="nome">Nome <p-sortIcon field="nome"></p-sortIcon></th>
+            <th pSortableColumn="email">Email <p-sortIcon field="email"></p-sortIcon></th>
+            <th pSortableColumn="cargo">Cargo <p-sortIcon field="cargo"></p-sortIcon></th>
+            <th>Status</th>
+            <th style="width: 8rem">Ações</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-user>
+          <tr>
+            <td>
+              <span class="p-column-title">Nome</span>
+              {{user.nome}}
+            </td>
+            <td>
+              <span class="p-column-title">Email</span>
+              {{user.email}}
+            </td>
+            <td>
+              <span class="p-column-title">Cargo</span>
+              <p-tag [value]="user.cargo === 'admin' ? 'Administrador' : 'Colaborador'" 
+                     [severity]="user.cargo === 'admin' ? 'danger' : 'info'"></p-tag>
+            </td>
+            <td>
+              <span class="p-column-title">Status</span>
+              <p-tag [value]="user.ativo ? 'Ativo' : 'Inativo'" 
+                     [severity]="user.ativo ? 'success' : 'warn'"></p-tag>
+            </td>
+            <td>
+              <span class="p-column-title">Ações</span>
+              <div class="flex gap-2">
+                <p-button icon="pi pi-user-edit" [rounded]="true" [text]="true" severity="secondary" (click)="editUsuario(user)"></p-button>
+                <p-button icon="pi pi-trash" [rounded]="true" [text]="true" severity="danger" (click)="deleteUsuario(user)" 
+                          [disabled]="user.id === 'admin'"></p-button>
+              </div>
+            </td>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td colspan="5" class="text-center p-4">Nenhum usuário encontrado.</td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </p-card>
+  </div>
+
+  <!-- Form Dialog -->
+  <p-dialog [(visible)]="displayDialog" [header]="isEditMode ? 'Editar Usuário' : 'Novo Usuário'" 
+            [modal]="true" [breakpoints]="{ '960px': '75vw', '640px': '100vw' }" [style]="{ width: '450px' }"
+            styleClass="p-fluid">
+    <ng-template pTemplate="content">
+      <form [formGroup]="usuarioForm" class="flex flex-column gap-4 py-4">
+        <div class="field">
+          <p-floatLabel>
+            <input pInputText id="nome" formControlName="nome" [fluid]="true" />
+            <label for="nome">Nome Completo</label>
+          </p-floatLabel>
+          <small class="p-error block" *ngIf="usuarioForm.get('nome')?.invalid && usuarioForm.get('nome')?.touched">
+            Nome é obrigatório (mín. 3 caracteres).
+          </small>
+        </div>
+
+        <div class="field">
+          <p-floatLabel>
+            <input pInputText id="email" formControlName="email" type="email" [fluid]="true" />
+            <label for="email">E-mail (Login)</label>
+          </p-floatLabel>
+          <small class="p-error block" *ngIf="usuarioForm.get('email')?.invalid && usuarioForm.get('email')?.touched">
+            Insira um e-mail válido.
+          </small>
+        </div>
+
+        <div class="field">
+          <label class="block mb-2 font-bold">Cargo / Perfil</label>
+          <p-select [options]="cargos" formControlName="cargo" optionLabel="label" optionValue="value" 
+                   placeholder="Selecione o Cargo" [fluid]="true"></p-select>
+        </div>
+
+        <div class="field">
+          <p-floatLabel>
+            <input pInputText id="senha" formControlName="senha" type="password" [fluid]="true" />
+            <label for="senha">{{ isEditMode ? 'Nova Senha (opcional)' : 'Senha de Acesso' }}</label>
+          </p-floatLabel>
+          <small class="p-error block" *ngIf="usuarioForm.get('senha')?.invalid && usuarioForm.get('senha')?.touched">
+            Senha deve ter pelo menos 6 caracteres.
+          </small>
+        </div>
+
+        <div class="field-checkbox">
+          <p-checkbox formControlName="ativo" [binary]="true" inputId="ativo"></p-checkbox>
+          <label for="ativo" class="ml-2">Usuário Ativo</label>
+        </div>
+      </form>
+    </ng-template>
+
+    <ng-template pTemplate="footer">
+      <p-button label="Cancelar" icon="pi pi-times" [text]="true" (click)="displayDialog = false" severity="secondary"></p-button>
+      <p-button label="Salvar" icon="pi pi-check" (click)="saveUsuario()" [disabled]="usuarioForm.invalid" severity="primary"></p-button>
+    </ng-template>
+  </p-dialog>
+</ion-content>

@@ -1,3 +1,44 @@
 <ion-app>
   <ion-router-outlet></ion-router-outlet>
+
+  <!-- Global FAB - Only shown on Alunos/Home screen -->
+  <ion-fab *ngIf="showLayout() && (isActive('/home') || isActive('/alunos'))" vertical="bottom" horizontal="end" slot="fixed" style="margin-bottom: 85px; margin-right: 15px; z-index: 10000;">
+    <ion-fab-button color="primary" (click)="navigateTo('/cadastro')">
+      <ion-icon name="add"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+
+  <!-- Global bottom tab bar -->
+  <ion-footer *ngIf="showLayout()" class="ion-no-border">
+    <ion-toolbar class="footer-toolbar">
+      <ion-tab-bar color="light" class="organic-tabs">
+        <ion-tab-button (click)="navigateTo('/home')" [class.tab-selected]="isActive('/home')">
+          <ion-icon name="people"></ion-icon>
+          <ion-label>Alunos</ion-label>
+        </ion-tab-button>
+
+        <ion-tab-button (click)="navigateTo('/portaria')" [class.tab-selected]="isActive('/portaria')">
+          <ion-icon name="qr-code"></ion-icon>
+          <ion-label>Portaria</ion-label>
+        </ion-tab-button>
+
+        <ion-tab-button (click)="navigateTo('/social')" class="tab-highlight">
+          <div class="fab-mimic">
+            <ion-icon name="map"></ion-icon>
+          </div>
+          <ion-label style="margin-top: 5px;">Campo</ion-label>
+        </ion-tab-button>
+
+        <ion-tab-button (click)="navigateTo('/ponto')" [class.tab-selected]="isActive('/ponto')">
+          <ion-icon name="camera"></ion-icon>
+          <ion-label>Ponto</ion-label>
+        </ion-tab-button>
+
+        <ion-tab-button (click)="navigateTo('/usuarios')" [class.tab-selected]="isActive('/usuarios')">
+          <ion-icon name="people-circle"></ion-icon>
+          <ion-label>Usuários</ion-label>
+        </ion-tab-button>
+      </ion-tab-bar>
+    </ion-toolbar>
+  </ion-footer>
 </ion-app>

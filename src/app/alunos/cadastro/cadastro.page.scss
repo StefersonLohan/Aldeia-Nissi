@@ -1,0 +1,139 @@
+ion-content {
+  --background: #fdfdfd;
+}
+
+.field-header {
+  background: linear-gradient(135deg, var(--ion-color-primary), var(--ion-color-tertiary));
+  padding: 15px 20px 65px 20px;
+  color: white;
+
+  h3 {
+    margin: 0;
+    font-weight: 800;
+    font-size: 22px;
+  }
+  p {
+    font-size: 13px;
+    opacity: 0.9;
+    margin: 5px 0 0 0;
+    line-height: 1.4;
+  }
+}
+
+.form-container {
+  padding: 20px;
+  padding-bottom: 150px;
+  margin-top: -40px;
+  background: #fdfdfd;
+  border-top-left-radius: 35px;
+  border-top-right-radius: 35px;
+  box-shadow: 0 -8px 20px rgba(0,0,0,0.06);
+
+  .photo-upload-section {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 25px;
+    margin-top: -60px;
+    position: relative;
+    z-index: 100;
+  }
+
+  .photo-placeholder {
+        width: 100px;
+        height: 100px;
+        background: white;
+        border-radius: 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        color: var(--ion-color-primary);
+        font-weight: 600;
+        transition: transform 0.2s ease;
+        background-size: cover;
+        background-position: center;
+        
+        &.has-photo {
+            border: 3px solid white;
+        }
+
+        &:active {
+            transform: scale(0.95);
+        }
+
+    ion-icon {
+      font-size: 36px;
+      margin-bottom: 4px;
+      color: var(--ion-color-primary);
+    }
+    span {
+      font-size: 12px;
+      font-weight: 700;
+      color: #666;
+    }
+  }
+
+  .organic-form {
+    background: transparent;
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+    padding-top: 10px;
+
+    .p-field {
+      width: 100%;
+      
+      p-floatLabel {
+         display: block;
+         width: 100%;
+      }
+
+      input, p-inputNumber, p-select, textarea {
+        width: 100%;
+      }
+    }
+
+    .section-label {
+      font-weight: 700;
+      color: #333;
+      margin-top: 10px;
+      margin-bottom: -10px;
+      font-size: 15px;
+      padding-left: 5px;
+    }
+
+    .checkbox-group-prime {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      background: white;
+      padding: 20px;
+      border-radius: 18px;
+      border: 1px solid rgba(0,0,0,0.06);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+
+      .p-field-checkbox {
+         display: flex;
+         align-items: center;
+         gap: 12px;
+         
+         label {
+            font-size: 14px;
+            color: #444;
+            font-weight: 500;
+            cursor: pointer;
+         }
+      }
+    }
+  }
+
+  .capture-actions {
+    margin: 10px 0;
+  }
+
+  .save-actions {
+    margin-top: 10px;
+    margin-bottom: 30px;
+  }
+}

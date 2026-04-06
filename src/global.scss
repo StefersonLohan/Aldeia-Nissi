@@ -24,6 +24,13 @@
 @import "@ionic/angular/css/text-alignment.css";
 @import "@ionic/angular/css/text-transformation.css";
 @import "@ionic/angular/css/flex-utils.css";
+@import "leaflet/dist/leaflet.css";
+@import "leaflet-routing-machine/dist/leaflet-routing-machine.css";
+
+// Global fix for Leaflet Routing Machine to hide the instructions panel by default
+.leaflet-routing-container {
+  display: none !important;
+}
 
 /**
  * Ionic Dark Mode
@@ -35,3 +42,154 @@
 /* @import "@ionic/angular/css/palettes/dark.always.css"; */
 /* @import "@ionic/angular/css/palettes/dark.class.css"; */
 @import "@ionic/angular/css/palettes/dark.system.css";
+
+/* ==========================================================================
+   PADRONIZAÇÃO ALDEIA NISSI (PRIME NG + IONIC)
+   ========================================================================== */
+
+/* Ajustes Globais de Layout */
+.organic-form {
+  .p-field {
+    margin-bottom: 24px;
+    position: relative;
+    width: 100%;
+  }
+}
+
+/* Estilo Padronizado de Inputs e Componentes PrimeNG */
+::ng-deep {
+  // Float Label Global
+  .p-floatlabel {
+    display: block;
+    width: 100%;
+    
+    label {
+      left: 16px !important;
+      color: #777 !important;
+      transition: all 0.2s ease-in-out !important;
+      font-size: 14px !important;
+    }
+    
+    // Label when floating or focused
+    &:has(.p-inputtext:focus),
+    &:has(.p-inputtext.p-filled),
+    &:has(.p-inputnumber.p-inputnumber-input:focus) {
+       label {
+          background: white !important;
+          padding: 0 4px !important;
+          border-radius: 4px !important;
+          color: var(--ion-color-primary) !important;
+          font-weight: 700 !important;
+          left: 12px !important;
+       }
+    }
+  }
+
+  // Inputs de Texto e Áreas de Texto
+  .p-inputtext, .p-textarea, .p-inputnumber-input {
+    width: 100% !important;
+    padding: 14px 18px !important; // Larger for better mobile experience
+    border-radius: 16px !important;
+    border: 1px solid rgba(0,0,0,0.1) !important;
+    background: #fdfdfd !important;
+    font-size: 15px !important;
+    color: #333 !important;
+    transition: all 0.3s ease !important;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.02) !important;
+
+    &:focus {
+      border-color: var(--ion-color-primary) !important;
+      box-shadow: 0 0 0 2px rgba(230, 81, 0, 0.1) !important;
+      background: #ffffff !important;
+    }
+    
+    &::placeholder {
+       color: #bbb;
+       font-weight: 400;
+    }
+  }
+
+  // Select e Dropdowns
+  .p-select, .p-dropdown {
+    width: 100% !important;
+    border-radius: 16px !important;
+    height: 52px !important;
+    border: 1px solid rgba(0,0,0,0.1) !important;
+    background: #fdfdfd !important;
+    align-items: center !important;
+    
+    .p-select-label, .p-dropdown-label {
+      padding: 12px 18px !important;
+      font-size: 14px !important;
+      font-weight: 500 !important;
+      color: #333 !important;
+    }
+    
+    &:not(.p-disabled).p-focus {
+      border-color: var(--ion-color-primary) !important;
+      box-shadow: 0 0 0 2px rgba(230, 81, 0, 0.1) !important;
+    }
+  }
+
+  // Checkbox Estilizado
+  .p-checkbox {
+    .p-checkbox-box {
+      border-radius: 8px !important;
+      border-width: 2px !important;
+      width: 24px !important;
+      height: 24px !important;
+      
+      &.p-highlight {
+        background: var(--ion-color-primary) !important;
+        border-color: var(--ion-color-primary) !important;
+      }
+    }
+  }
+
+  // ToggleButton Padronizado
+  .p-togglebutton {
+    border-radius: 16px !important;
+    padding: 12px 20px !important;
+    font-weight: 700 !important;
+    transition: all 0.3s ease !important;
+    
+    &.p-highlight {
+      background: var(--ion-color-primary) !important;
+      color: white !important;
+      border-color: var(--ion-color-primary) !important;
+      box-shadow: 0 4px 12px rgba(230, 81, 0, 0.2) !important;
+    }
+  }
+  
+  // Custom SelectButton
+  .p-selectbutton {
+     .p-button {
+        border-radius: 12px !important;
+        margin: 0 4px !important;
+        border: 1px solid #ddd !important;
+        background: white !important;
+        
+        &.p-highlight {
+           background: var(--ion-color-primary) !important;
+           color: white !important;
+           border-color: var(--ion-color-primary) !important;
+        }
+     }
+  }
+}
+
+/* Grid Layout Helper Padronizado */
+.aldeia-grid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 16px;
+  width: 100%;
+  
+  .col-12 { grid-column: span 12; }
+  .col-6 { grid-column: span 6; }
+  .col-4 { grid-column: span 4; }
+  
+  @media (max-width: 768px) {
+    .col-6, .col-4 { grid-column: span 12; }
+  }
+}

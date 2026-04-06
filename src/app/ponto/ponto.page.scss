@@ -1,0 +1,113 @@
+ion-content {
+  --background: #fdfdfd;
+}
+
+.ponto-header {
+  background: var(--ion-color-primary);
+  padding: 20px 20px 60px 20px;
+  color: white;
+  text-align: center;
+  border-bottom-left-radius: 30px;
+  border-bottom-right-radius: 30px;
+  
+  h2 {
+    font-size: 20px;
+    font-weight: 700;
+    margin: 0;
+  }
+  p {
+    font-size: 13px;
+    opacity: 0.9;
+    margin-top: 5px;
+  }
+}
+
+.user-profile-summary {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: -45px;
+
+  ion-avatar {
+    width: 90px;
+    height: 90px;
+    border: 4px solid white;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  }
+
+  h3 {
+    margin: 12px 0 4px 0;
+    font-weight: 800;
+    font-size: 18px;
+    color: #333;
+  }
+
+  p {
+    margin: 0;
+    font-size: 13px;
+    color: #888;
+    font-weight: 500;
+  }
+}
+
+.ponto-actions {
+  padding: 24px 20px;
+
+  .location-status {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px;
+    border-radius: 12px;
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 20px;
+
+    &.success {
+      background: rgba(45, 211, 111, 0.1);
+      color: var(--ion-color-success);
+    }
+  }
+
+  .selfie-module {
+    background: white;
+    border-radius: 20px;
+    padding: 16px;
+    box-shadow: 0 6px 15px rgba(0,0,0,0.05);
+    margin-bottom: 24px;
+    border: 1px solid rgba(0,0,0,0.05);
+
+    .camera-placeholder {
+      height: 140px;
+      background: #f0f0f0;
+      border-radius: 12px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 16px;
+      border: 2px dashed #ccc;
+
+      ion-icon {
+        font-size: 40px;
+        color: #999;
+        margin-bottom: 8px;
+      }
+      p {
+        font-size: 12px;
+        color: #777;
+        margin: 0;
+        padding: 0 10px;
+        text-align: center;
+      }
+    }
+  }
+
+  .punch-btn {
+    height: 55px;
+    font-weight: 800;
+    font-size: 16px;
+    margin-top: 10px;
+  }
+}

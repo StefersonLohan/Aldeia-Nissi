@@ -1,0 +1,306 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar color="primary">
+    <div style="display: flex; align-items: center; padding: 0 10px; width: 100%; justify-content: space-between;">
+        <div style="display: flex; align-items: center;">
+          <ion-buttons slot="start">
+              <ion-back-button defaultHref="/home" color="light"></ion-back-button>
+          </ion-buttons>
+          <ion-title style="padding-left: 5px;">Ação de Campo</ion-title>
+        </div>
+        
+        <ion-buttons slot="end">
+          <p-selectButton 
+            [options]="viewOptions" 
+            [(ngModel)]="viewMode" 
+            (onChange)="toggleView()"
+            optionLabel="icon" 
+            optionValue="value"
+            styleClass="prime-toggle-segment">
+            <ng-template let-item pTemplate="item">
+              <i [class]="item.icon"></i>
+            </ng-template>
+          </p-selectButton>
+        </ion-buttons>
+    </div>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <!-- MAP VIEW -->
+  <div class="map-wrapper" [class.hidden]="viewMode !== 'map'">
+    <div id="map-container"></div>
+    
+    <div class="map-overlay" *ngIf="isPickingLocation">
+      <div class="overlay-msg">
+        <ion-icon name="pin"></ion-icon>
+        Toque no mapa para marcar o local
+      </div>
+      <p-button label="Cancelar" icon="pi pi-times" severity="danger" (click)="isPickingLocation = false" size="small"></p-button>
+    </div>
+
+    <div class="fab-container" *ngIf="!isPickingLocation">
+      <p-button icon="pi pi-plus" (click)="startNewVisit(true)" severity="warn" styleClass="fab-btn main-fab"></p-button>
+      <p-button icon="pi pi-map-marker" (click)="startNewVisit(false)" severity="info" styleClass="fab-btn sec-fab"></p-button>
+      <p-button icon="pi pi-compass" (click)="locateMe()" severity="secondary" styleClass="fab-btn sec-fab"></p-button>
+    </div>
+  </div>
+
+  <!-- LIST VIEW -->
+  <div class="list-container" *ngIf="viewMode === 'list'">
+    <div class="field-header">
+      <h3>Lista de Endereços</h3>
+      <p>Gerenciamento e busca de pontos registrados em campo.</p>
+    </div>
+
+    <div class="table-card">
+      <p-table #dt [value]="allVisitas" [rows]="10" [paginator]="true" 
+               [globalFilterFields]="['assistidoNome']"
+               responsiveLayout="stack" breakpoint="960px"
+               styleClass="p-datatable-sm visits-table">
+        <ng-template pTemplate="caption">
+          <div class="table-header-row">
+            <p-iconField iconPosition="left" class="w-full">
+              <p-inputIcon styleClass="pi pi-search" />
+              <input pInputText type="text" (input)="dt.filterGlobal($any($event.target).value, 'contains')" 
+                     placeholder="Buscar por nome..." class="w-full search-input" />
+            </p-iconField>
+          </div>
+        </ng-template>
+        <ng-template pTemplate="header">
+          <tr>
+            <th pSortableColumn="assistidoNome">Assistido <p-sortIcon field="assistidoNome"></p-sortIcon></th>
+            <th pSortableColumn="data">Data <p-sortIcon field="data"></p-sortIcon></th>
+            <th>Status</th>
+            <th style="width: 100px">Ações</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-v>
+          <tr>
+            <td>
+              <span class="p-column-title">Assistido</span>
+              <div class="name-cell">{{ v.assistidoNome }}</div>
+            </td>
+            <td>
+              <span class="p-column-title">Data</span>
+              {{ v.data | date:'dd/MM/yyyy' }}
+            </td>
+            <td>
+              <span class="p-column-title">Status</span>
+              <p-tag [severity]="v.localStatus === 'pending' ? 'danger' : 'success'" 
+                     [value]="v.localStatus === 'pending' ? 'Pendente' : 'Sincronizado'"></p-tag>
+            </td>
+            <td>
+              <div class="action-cell">
+                <p-button icon="pi pi-map-marker" [rounded]="true" [text]="true" 
+                          (click)="focusNoMapa(v)" pTooltip="Ver no Mapa"></p-button>
+                <p-button icon="pi pi-directions" [rounded]="true" [text]="true" severity="success" 
+                          (click)="tracarRota(v)" pTooltip="Traçar Rota"></p-button>
+                <p-button icon="pi pi-pencil" [rounded]="true" [text]="true" severity="secondary" 
+                          (click)="carregarVisitaParaEdicao(v)" pTooltip="Editar"></p-button>
+              </div>
+            </td>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td colspan="4" class="empty-msg">Nenhuma visita encontrada.</td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+  </div>
+
+  <!-- FORM VIEW -->
+  <div class="field-header" *ngIf="viewMode === 'form'">
+     <h3>{{ editingVisitaId ? 'Editar Registro' : 'Nova Visitação' }}</h3>
+     <p>{{ editingVisitaId ? 'Atualizando as informações do ponto selecionado.' : 'Preencha os detalhes da visita para o local selecionado.' }}</p>
+     <div class="gps-badge" *ngIf="gps">
+       <ion-icon name="location"></ion-icon>
+       {{ gps.lat | number:'1.4-4' }}, {{ gps.lng | number:'1.4-4' }}
+     </div>
+  </div>
+
+  <div class="form-container" *ngIf="viewMode === 'form'">
+    <div class="organic-form p-fluid">
+      <div class="edit-warn" *ngIf="editingVisitaId">
+        <ion-icon name="alert-circle-outline"></ion-icon>
+        Você está editando um registro existente.
+        <p-button label="Novo" icon="pi pi-plus" [text]="true" size="small" (click)="limparFormulario()"></p-button>
+      </div>
+
+      <!-- IDENTIFICAÇÃO -->
+      <div class="section-label">Identificação da Visita</div>
+      <div class="p-field">
+        <p-toggleButton 
+          [(ngModel)]="isAssistido" 
+          onLabel="Pessoa já assistida pelo Projeto" 
+          offLabel="Nova pessoa (Não-Assistida)" 
+          onIcon="pi pi-check-circle" 
+          offIcon="pi pi-plus-circle"
+          styleClass="w-full prime-toggle-custom" />
+      </div>
+
+      <div class="p-field" *ngIf="isAssistido">
+        <p-floatLabel>
+          <p-autoComplete 
+            [(ngModel)]="selectedAssistido" 
+            [suggestions]="filteredAssistidos" 
+            (completeMethod)="filterAssistidos($event)" 
+            [forceSelection]="true"
+            field="nome" 
+            inputId="search-assistido"
+            [fluid]="true"
+            styleClass="w-full prime-autocomplete-custom">
+            <ng-template let-a pTemplate="item">
+              <div class="assistido-item">
+                 <ion-avatar class="small-avatar-mini" *ngIf="a.foto">
+                   <img [src]="a.foto" />
+                 </ion-avatar>
+                 <div class="txt">
+                    <div class="name">{{ a.nome }}</div>
+                    <div class="category">{{ a.categoria }}</div>
+                 </div>
+              </div>
+            </ng-template>
+          </p-autoComplete>
+          <label for="search-assistido">Buscar Assistido por nome ou código</label>
+        </p-floatLabel>
+
+        <div class="p-field mt-4">
+          <p-floatLabel>
+            <input pInputText id="area" [(ngModel)]="areaAssistencia" class="w-full" [fluid]="true" />
+            <label for="area">Em qual área/projeto é assistido?</label>
+          </p-floatLabel>
+        </div>
+      </div>
+
+      <div *ngIf="!isAssistido" class="p-fluid">
+        <div class="p-field">
+          <p-floatLabel>
+            <input pInputText id="new-name" [(ngModel)]="interviewedName" class="w-full" [fluid]="true" />
+            <label for="new-name">Nome da Pessoa Entrevistada</label>
+          </p-floatLabel>
+        </div>
+        <div class="p-field">
+          <p-floatLabel>
+            <input pInputText id="motivo" [(ngModel)]="motivoVisita" class="w-full" [fluid]="true" />
+            <label for="motivo">Motivo da Visita (Exploratória, Indicação, etc.)</label>
+          </p-floatLabel>
+        </div>
+      </div>
+
+      <!-- DADOS BÁSICOS -->
+      <div class="section-label">Dados Básicos (O Lar)</div>
+      <div class="aldeia-grid">
+        <div class="p-field col-12">
+           <p-select [options]="opcoesParentesco" [(ngModel)]="quemRecebeu" 
+                    placeholder="Quem recebeu a visita?" [fluid]="true"></p-select>
+        </div>
+        
+        <div class="p-field col-6">
+          <p-floatLabel>
+            <p-inputNumber [(ngModel)]="totalMoradores" [min]="1" inputId="moradores" [fluid]="true" />
+            <label for="moradores">Total de Moradores</label>
+          </p-floatLabel>
+        </div>
+
+        <div class="p-field col-6">
+          <p-select [options]="opcoesCasa" [(ngModel)]="tipoCasa" 
+                   placeholder="Tipo de Casa" [fluid]="true"></p-select>
+        </div>
+      </div>
+
+      <div class="p-field mt-4">
+        <p-floatLabel>
+          <textarea pTextarea [(ngModel)]="principaisQueixas" rows="2" [autoResize]="true" id="queixas" class="w-full" [fluid]="true"></textarea>
+          <label for="queixas">Quais as principais queixas / necessidades?</label>
+        </p-floatLabel>
+      </div>
+
+      <div class="p-field mt-4">
+        <p-floatLabel>
+          <textarea pTextarea [(ngModel)]="detalhesSaude" rows="2" [autoResize]="true" id="saude" class="w-full" [fluid]="true"></textarea>
+          <label for="saude">Estado de Saúde da Família</label>
+        </p-floatLabel>
+      </div>
+
+      <!-- ESPIRITUAL -->
+      <div class="section-label">Acompanhamento Espiritual</div>
+      <div class="checkbox-container-custom">
+        <div class="p-field-checkbox">
+          <p-checkbox [(ngModel)]="espiritual.segueReligiao" [binary]="true" inputId="segueRel"></p-checkbox>
+          <label for="segueRel" class="ml-2">Segue alguma crença / religião?</label>
+        </div>
+        <div class="p-field mt-2" *ngIf="espiritual.segueReligiao">
+           <input pInputText placeholder="Qual religião?" [(ngModel)]="espiritual.qualReligiao" class="w-full" [fluid]="true" />
+        </div>
+        
+        <div class="p-field-checkbox">
+          <p-checkbox [(ngModel)]="espiritual.conheceJesus" [binary]="true" inputId="conheceJ"></p-checkbox>
+          <label for="conheceJ" class="ml-2">Já conhece a Jesus?</label>
+        </div>
+        
+        <div class="p-field-checkbox">
+          <p-checkbox [(ngModel)]="espiritual.entregouVida" [binary]="true" inputId="entregouV"></p-checkbox>
+          <label for="entregouV" class="ml-2">Já entregou sua vida a Ele?</label>
+        </div>
+
+        <div class="p-field-checkbox" *ngIf="!espiritual.entregouVida">
+          <p-checkbox [(ngModel)]="espiritual.temInteresse" [binary]="true" inputId="temInt"></p-checkbox>
+          <label for="temInt" class="ml-2">Teve interesse em entregar a vida?</label>
+        </div>
+
+        <div class="p-field-checkbox">
+          <p-checkbox [(ngModel)]="espiritual.possuiBiblia" [binary]="true" inputId="biblia"></p-checkbox>
+          <label for="biblia" class="ml-2">Possui Bíblia?</label>
+        </div>
+      </div>
+
+      <!-- OBSERVAÇÃO DO VOLUNTÁRIO -->
+      <div class="section-label">Observação e Percepção do Voluntário</div>
+      
+      <div class="p-field mt-4">
+         <p-floatLabel>
+            <textarea pTextarea [(ngModel)]="percepcoesGerais" rows="3" [autoResize]="true" id="perc" class="w-full" [fluid]="true"></textarea>
+            <label for="perc">Percepções Gerais da Visita</label>
+         </p-floatLabel>
+      </div>
+
+      <div class="p-field mt-4">
+         <p-floatLabel>
+            <textarea pTextarea [(ngModel)]="acoesConsideradas" rows="3" [autoResize]="true" id="acoes" class="w-full" [fluid]="true"></textarea>
+            <label for="acoes">Possíveis ações que você consideraria</label>
+         </p-floatLabel>
+      </div>
+
+      <div class="p-field mt-4">
+         <p-floatLabel>
+            <input pInputText [(ngModel)]="pontoSensivel" id="sensivel" class="w-full" [fluid]="true" />
+            <label for="sensivel">Algo sensível (Moléstia, Urgência de saúde?)</label>
+         </p-floatLabel>
+      </div>
+
+      <!-- CAPTURA E SALVAMENTO -->
+      <div class="section-label">Captura e Encerramento</div>
+      <div class="capture-actions">
+         <p-button label="Add Fotos" icon="pi pi-camera" [fluid]="true" severity="secondary" (click)="tirarFoto()"></p-button>
+         <p-button [label]="gps ? 'GPS OK' : 'Gravar GPS'" 
+                  [icon]="gps ? 'pi pi-check' : 'pi pi-map-marker'" 
+                  [severity]="gps ? 'help' : 'info'" 
+                  [fluid]="true" (click)="capturarGPS()"></p-button>
+      </div>
+
+      <div class="photo-previews" *ngIf="fotos.length > 0">
+         <div class="photo-thumb" *ngFor="let photo of fotos; let i = index">
+            <img [src]="photo" />
+            <div class="remove-btn" (click)="fotos.splice(i, 1)"><ion-icon name="close-circle"></ion-icon></div>
+         </div>
+      </div>
+
+       <div class="save-actions" style="margin-top: 30px;">
+          <p-button label="CONCLUIR E SALVAR RELATÓRIO" icon="pi pi-save" [fluid]="true" size="large" (click)="salvarRelatorio()" styleClass="save-btn-custom"></p-button>
+          <p style="text-align: center; font-size: 11px; color: #999; margin-top: 10px;">Os dados serão sincronizados na próxima rede Wi-Fi.</p>
+       </div>
+    </div>
+  </div>
+</ion-content>

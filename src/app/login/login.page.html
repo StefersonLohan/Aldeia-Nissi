@@ -1,0 +1,85 @@
+<ion-content [fullscreen]="true" class="login-page">
+  <div class="login-container">
+    <div class="logo-area">
+      <img src="assets/icon/logo.svg" alt="Aldeia Nissi" class="logo" style="width: 120px; height: auto;">
+      <h1>Aldeia Nissi</h1>
+      <p>Gestão Social em Angola</p>
+    </div>
+
+    <p-card class="login-card">
+      <ng-template pTemplate="header">
+        <div class="card-title">
+          <h2>Bem-vindo de volta</h2>
+          <span>Acesse sua conta para continuar</span>
+        </div>
+      </ng-template>
+
+      <form [formGroup]="loginForm" (ngSubmit)="onLogin()" class="login-form">
+        <div class="form-field">
+          <p-floatlabel variant="on">
+            <p-inputgroup>
+              <p-inputgroup-addon>
+                <i class="pi pi-envelope"></i>
+              </p-inputgroup-addon>
+              <input 
+                id="email" 
+                type="text" 
+                pInputText 
+                formControlName="email" 
+                autocomplete="email"
+                class="w-full"
+              />
+            </p-inputgroup>
+            <label for="email">E-mail</label>
+          </p-floatlabel>
+          <small class="error-msg" *ngIf="loginForm.get('email')?.invalid && loginForm.get('email')?.touched">
+            Por favor, insira um e-mail válido.
+          </small>
+        </div>
+
+        <div class="form-field">
+          <p-floatlabel variant="on">
+            <p-inputgroup>
+              <p-inputgroup-addon>
+                <i class="pi pi-lock"></i>
+              </p-inputgroup-addon>
+              <input 
+                id="password" 
+                type="password" 
+                pInputText 
+                formControlName="password" 
+                autocomplete="current-password"
+                class="w-full"
+              />
+            </p-inputgroup>
+            <label for="password">Senha</label>
+          </p-floatlabel>
+          <small class="error-msg" *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched">
+            A senha deve ter pelo menos 6 caracteres.
+          </small>
+        </div>
+
+        <div class="login-actions">
+          <p-button 
+            label="Entrar" 
+            type="submit" 
+            [loading]="isLoading" 
+            [disabled]="loginForm.invalid" 
+            class="full-width-btn"
+            styleClass="w-full p-button-lg"
+          ></p-button>
+        </div>
+      </form>
+
+      <ng-template pTemplate="footer">
+        <div class="footer-links">
+          <a href="#">Esqueceu a senha?</a>
+        </div>
+      </ng-template>
+    </p-card>
+
+    <div class="version-info">
+      v0.0.1 &bull; Missão Aldeia Nissi
+    </div>
+  </div>
+</ion-content>

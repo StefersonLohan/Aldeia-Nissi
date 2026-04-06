@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-root',
@@ -7,5 +8,17 @@ import { Component } from '@angular/core';
   standalone: false,
 })
 export class AppComponent {
-  constructor() {}
+  constructor(private router: Router) {}
+
+  navigateTo(path: string) {
+    this.router.navigate([path]);
+  }
+
+  showLayout(): boolean {
+    return !this.router.url.includes('/login');
+  }
+
+  isActive(path: string): boolean {
+    return this.router.url.includes(path);
+  }
 }

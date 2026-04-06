@@ -1,2 +1,42 @@
-// For information on how to create your own theme, please refer to:
-// https://ionicframework.com/docs/theming/
+// Custom Theme for Jeova Nissi Aldeia App
+// Organico, Humanizado e Caloroso
+
+:root {
+  /* ==========================================================================
+     ALDEIA NISSI COLOR PALETTE
+     ========================================================================== */
+  --aldeia-primary: #e65100;    /* Terracotta/Laranja Quente (Original) */
+  --aldeia-secondary: #ffb300;  /* Amarelo Terra (Joy/Warmth) */
+  --aldeia-warn: #e65100;       /* Terracotta/Laranja (Attention/Action) */
+  --aldeia-success: #43a047;    /* Verde Natureza */
+  --aldeia-surface: #f8fafc;    /* Background suave */
+
+  /** primary Mapping **/
+  --ion-color-primary: var(--aldeia-primary);
+  --ion-color-primary-rgb: 230, 81, 0;
+  --ion-color-primary-contrast: #ffffff;
+  --ion-color-primary-shade: #ca4700;
+  --ion-color-primary-tint: #e9621a;
+
+  /** secondary Mapping **/
+  --ion-color-secondary: var(--aldeia-secondary);
+  --ion-color-secondary-rgb: 255, 179, 0;
+  --ion-color-secondary-contrast: #000000;
+  --ion-color-secondary-shade: #e09d00;
+  --ion-color-secondary-tint: #ffbb1a;
+
+  /** warning Mapping **/
+  --ion-color-warning: var(--aldeia-warn);
+
+  /* Arredondamentos globais para a UI "Orgânica" */
+  --ion-border-radius: 12px;
+  --ion-font-family: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+@media (prefers-color-scheme: dark) {
+  /* Configuração futura opcional de Dark Mode, por enquanto mantemos a essência */
+  body {
+    --ion-background-color: #121212;
+    --ion-text-color: #ffffff;
+  }
+}
