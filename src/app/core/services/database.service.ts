@@ -10,7 +10,8 @@ import {
   updateDoc, 
   deleteDoc,
   query,
-  QueryConstraint
+  QueryConstraint,
+  getDoc
 } from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
 
@@ -31,6 +32,16 @@ export class DatabaseService {
   getDoc<T>(path: string, id: string): Observable<T> {
     const docRef = doc(this.firestore, path, id);
     return docData(docRef, { idField: 'id' }) as Observable<T>;
+  }
+
+  // Get a single document (Promise-based)
+  async getDocument<T>(path: string, id: string): Promise<T | undefined> {
+    const docRef = doc(this.firestore, path, id);
+    const docSnap = await getDoc(docRef);
+    if (docSnap.exists()) {
+      return { id: docSnap.id, ...docSnap.data() } as T;
+    }
+    return undefined;
   }
 
   // Create a new document with auto ID

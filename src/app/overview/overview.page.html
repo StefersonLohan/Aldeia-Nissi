@@ -1,0 +1,68 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar color="primary" class="header-organic">
+    <ion-title>Dashboard Gerencial</ion-title>
+    <ion-buttons slot="end">
+      <ion-icon name="stats-chart" style="font-size: 24px; margin-right: 15px;"></ion-icon>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding organic-background">
+  <div class="dashboard-container">
+    
+    <!-- Mensagem de Boas-Vindas ou Resumo -->
+    <div class="welcome-header">
+      <h2>Métricas do Campo</h2>
+      <p>Acompanhamento em tempo real dos cadastros sincronizados.</p>
+    </div>
+
+    <!-- Cards de KPI usando PrimeNG -->
+    <div class="kpi-grid">
+      <p-card header="Total Assistidos" subheader="Cadastros Ativos">
+        <div class="kpi-value text-primary">
+          <ion-icon name="people"></ion-icon> {{totalGeral}}
+        </div>
+      </p-card>
+
+      <p-card header="Alunos (Escola)" subheader="Atendimentos Infantis">
+        <div class="kpi-value text-success">
+          <ion-icon name="school"></ion-icon> {{totalAlunos}}
+        </div>
+      </p-card>
+
+      <p-card header="Projeto Viúvas" subheader="Famílias Atendidas">
+        <div class="kpi-value text-warning">
+          <ion-icon name="heart"></ion-icon> {{totalViuvas}}
+        </div>
+      </p-card>
+
+      <p-card header="Locais de Atuação" subheader="Aldeias Mapeadas">
+        <div class="kpi-value text-dark">
+          <ion-icon name="location"></ion-icon> {{totalLocais}}
+        </div>
+      </p-card>
+    </div>
+
+    <!-- Seção de Relatórios / Progressos -->
+    <p-card header="Distribuição Demográfica" styleClass="mt-4 custom-p-card">
+       
+       <div class="metric-row">
+         <div class="metric-info">
+            <span class="metric-label">Alunos</span>
+            <span class="metric-perc">{{percAlunos}}%</span>
+         </div>
+         <p-progressBar [value]="percAlunos" [showValue]="false"></p-progressBar>
+       </div>
+
+       <div class="metric-row" style="margin-top: 15px;">
+         <div class="metric-info">
+            <span class="metric-label">Viúvas</span>
+            <span class="metric-perc">{{percViuvas}}%</span>
+         </div>
+         <p-progressBar [value]="percViuvas" [showValue]="false" color="#f5b041"></p-progressBar>
+       </div>
+
+    </p-card>
+
+  </div>
+</ion-content>

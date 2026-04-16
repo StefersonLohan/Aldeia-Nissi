@@ -32,27 +32,27 @@ import { Assistido } from 'src/app/core/models/assistido.model';
   styleUrls: ['./cadastro.page.scss'],
   standalone: true,
   imports: [
-    CommonModule, 
-    FormsModule, 
-    IonicModule, 
-    InputTextModule, 
-    InputNumberModule, 
-    SelectModule, 
-    TextareaModule, 
-    CheckboxModule, 
-    ButtonModule, 
-    CardModule, 
+    CommonModule,
+    FormsModule,
+    IonicModule,
+    InputTextModule,
+    InputNumberModule,
+    SelectModule,
+    TextareaModule,
+    CheckboxModule,
+    ButtonModule,
+    CardModule,
     FloatLabelModule,
     QRCodeComponent,
     Dialog,
-    ImageModule
-  ]
+    ImageModule,
+  ],
 })
 export class CadastroPage implements OnInit {
   categorias = [
     { label: 'Criança (Aluno comum)', value: 'aluno' },
     { label: 'Criança Albina', value: 'albina' },
-    { label: 'Viúva', value: 'viuva' }
+    { label: 'Viúva', value: 'viuva' },
   ];
 
   selectedCategoria: any;
@@ -66,39 +66,43 @@ export class CadastroPage implements OnInit {
   gps_lat?: number;
   gps_lng?: number;
   editingId?: string;
-  
+
   showQRCode: boolean = false;
   qrCodeData: string = '';
 
   constructor(
-    private router: Router, 
+    private router: Router,
     private alertController: AlertController,
-    private assistidosService: AssistidosService
-  ) { }
+    private assistidosService: AssistidosService,
+  ) {}
 
-  ngOnInit() { 
+  ngOnInit() {
     const state = this.router.getCurrentNavigation()?.extras.state;
     if (state && (state as any).assistido) {
-       const a = (state as any).assistido;
-       this.editingId = a.id;
-       this.nome = a.nome;
-       this.idade = a.idade;
-       this.selectedCategoria = this.categorias.find(c => c.label === (a.categoria || a.tipo)) || this.categorias[0];
-       this.morada = a.morada || a.aldeia;
-       this.foto = a.foto;
-       this.isAlunoRegular = a.isAlunoRegular || (a.status === 'Regular');
-       this.hasAulasExtras = a.hasAulasExtras || false;
-       this.observacoes = a.observacoes || '';
+      const a = (state as any).assistido;
+      this.editingId = a.id;
+      this.nome = a.nome;
+      this.idade = a.idade;
+      this.selectedCategoria =
+        this.categorias.find((c) => c.label === (a.categoria || a.tipo)) ||
+        this.categorias[0];
+      this.morada = a.morada || a.aldeia;
+      this.foto = a.foto;
+      this.isAlunoRegular = a.isAlunoRegular || a.status === 'Regular';
+      this.hasAulasExtras = a.hasAulasExtras || false;
+      this.observacoes = a.observacoes || '';
     }
   }
 
   async tirarFoto() {
     try {
       const image = await Camera.getPhoto({
-        quality: 40, width: 400, height: 400,
+        quality: 40,
+        width: 400,
+        height: 400,
         allowEditing: true,
         resultType: CameraResultType.Base64,
-        source: CameraSource.Prompt
+        source: CameraSource.Prompt,
       });
       if (image.base64String) {
         const rawPhoto = `data:image/${image.format};base64,${image.base64String}`;
@@ -109,7 +113,11 @@ export class CadastroPage implements OnInit {
     }
   }
 
-  async resizeImage(base64: string, maxWidth: number, maxHeight: number): Promise<string> {
+  async resizeImage(
+    base64: string,
+    maxWidth: number,
+    maxHeight: number,
+  ): Promise<string> {
     return new Promise((resolve) => {
       const img = new Image();
       img.src = base64;
@@ -118,11 +126,18 @@ export class CadastroPage implements OnInit {
         let width = img.width;
         let height = img.height;
         if (width > height) {
-          if (width > maxWidth) { height *= maxWidth / width; width = maxWidth; }
+          if (width > maxWidth) {
+            height *= maxWidth / width;
+            width = maxWidth;
+          }
         } else {
-          if (height > maxHeight) { width *= maxHeight / height; height = maxHeight; }
+          if (height > maxHeight) {
+            width *= maxHeight / height;
+            height = maxHeight;
+          }
         }
-        canvas.width = width; canvas.height = height;
+        canvas.width = width;
+        canvas.height = height;
         const ctx = canvas.getContext('2d');
         ctx?.drawImage(img, 0, 0, width, height);
         resolve(canvas.toDataURL('image/jpeg', 0.6));
@@ -138,17 +153,27 @@ export class CadastroPage implements OnInit {
       const alert = await this.alertController.create({
         header: 'Localização Capturada',
         message: `Coordenadas: ${this.gps_lat.toFixed(4)}, ${this.gps_lng.toFixed(4)}`,
-        buttons: ['OK']
+        buttons: ['OK'],
       });
       await alert.present();
     } catch (e) {
-      this.alertController.create({ header: 'Erro no GPS', message: 'Verifique permissões.', buttons: ['OK'] }).then(a => a.present());
+      this.alertController
+        .create({
+          header: 'Erro no GPS',
+          message: 'Verifique permissões.',
+          buttons: ['OK'],
+        })
+        .then((a) => a.present());
     }
   }
 
   async salvarCadastro() {
     if (!this.nome || !this.selectedCategoria) {
-      const alert = await this.alertController.create({ header: 'Campos Obrigatórios', message: 'Informe Nome e Categoria.', buttons: ['OK'] });
+      const alert = await this.alertController.create({
+        header: 'Campos Obrigatórios',
+        message: 'Informe Nome e Categoria.',
+        buttons: ['OK'],
+      });
       await alert.present();
       return;
     }
@@ -165,7 +190,7 @@ export class CadastroPage implements OnInit {
       observacoes: this.observacoes,
       foto: this.foto,
       gps: this.gps_lat ? { lat: this.gps_lat, lng: this.gps_lng! } : undefined,
-      createdAt: Date.now()
+      createdAt: Date.now(),
     };
 
     try {
@@ -190,13 +215,13 @@ export class CadastroPage implements OnInit {
         title: `QR Code - ${this.nome}`,
         text: `QR Code de identificação para ${this.nome}`,
         url: dataUrl,
-        dialogTitle: 'Compartilhar QR Code'
+        dialogTitle: 'Compartilhar QR Code',
       });
     }
   }
 
   fecharEVoltar() {
-     this.showQRCode = false;
-     this.router.navigate(['/home']);
+    this.showQRCode = false;
+    this.router.navigate(['/home']);
   }
 }

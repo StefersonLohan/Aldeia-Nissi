@@ -13,8 +13,13 @@ const routes: Routes = [
     loadComponent: () => import('./login/login.page').then( m => m.LoginPage)
   },
   {
+    path: 'overview',
+    loadComponent: () => import('./overview/overview.page').then( m => m.OverviewPage),
+    canActivate: [authGuard]
+  },
+  {
     path: '',
-    redirectTo: 'login',
+    redirectTo: 'overview',
     pathMatch: 'full'
   },
   {
