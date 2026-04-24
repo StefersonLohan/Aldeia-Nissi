@@ -25,6 +25,8 @@ import { v4 as uuidv4 } from 'uuid';
 
 import { AssistidosService } from 'src/app/core/services/assistidos.service';
 import { Assistido } from 'src/app/core/models/assistido.model';
+import { AtividadesService, RegistroAtividade } from 'src/app/core/services/atividades.service';
+import { AuthService } from 'src/app/core/services/auth.service';
 
 @Component({
   selector: 'app-cadastro',
@@ -70,10 +72,32 @@ export class CadastroPage implements OnInit {
   showQRCode: boolean = false;
   qrCodeData: string = '';
 
+  currentSegment: string = 'dados';
+  
+  // Atividades
+  atividades: RegistroAtividade[] = [];
+  showNovaAtividade: boolean = false;
+  novaAtividade: Partial<RegistroAtividade> = {
+    tipoOcorrencia: 'Ocorrência interna - Escola',
+    envolveTerceiro: false,
+    descricao: ''
+  };
+  opcoesAtividade = [
+    { label: 'Ocorrência interna - Escola', value: 'Ocorrência interna - Escola' },
+    { label: 'Ocorrência interna - Moradia', value: 'Ocorrência interna - Moradia' },
+    { label: 'Ocorrência externa - Família', value: 'Ocorrência externa - Família' },
+    { label: 'Ocorrência externa - Hospital', value: 'Ocorrência externa - Hospital' },
+    { label: 'Boletim de Ocorrência', value: 'Boletim de Ocorrência' },
+    { label: 'Outro', value: 'Outro' },
+  ];
+  dataOcorrenciaInput: string = new Date().toISOString().split('T')[0];
+
   constructor(
     private router: Router,
     private alertController: AlertController,
     private assistidosService: AssistidosService,
+    private atividadesService: AtividadesService,
+    private authService: AuthService
   ) {}
 
   ngOnInit() {
@@ -91,6 +115,70 @@ export class CadastroPage implements OnInit {
       this.isAlunoRegular = a.isAlunoRegular || a.status === 'Regular';
       this.hasAulasExtras = a.hasAulasExtras || false;
       this.observacoes = a.observacoes || '';
+      
+      this.carregarAtividades();
+    }
+  }
+
+  carregarAtividades() {
+    if (!this.editingId) return;
+    this.atividadesService.getAtividadesByAssistido(this.editingId).subscribe(data => {
+      this.atividades = data.sort((a, b) => b.dataOcorrencia - a.dataOcorrencia);
+    });
+  }
+
+  async salvarAtividade() {
+    if (!this.editingId) {
+      const alert = await this.alertController.create({ header: 'Atenção', message: 'Salve o cadastro do assistido antes de adicionar atividades.', buttons: ['OK']});
+      await alert.present();
+      return;
+    }
+    if (!this.novaAtividade.descricao) {
+      const alert = await this.alertController.create({ header: 'Atenção', message: 'Descreva a atividade.', buttons: ['OK']});
+      await alert.present();
+      return;
+    }
+
+    const user = this.authService.getCurrentUser();
+    // Converter 'YYYY-MM-DD' em número (timestamp)
+    let dataOc = Date.now();
+    if (this.dataOcorrenciaInput) {
+       const [year, month, day] = this.dataOcorrenciaInput.split('-');
+       dataOc = new Date(Number(year), Number(month) - 1, Number(day), 12, 0, 0).getTime();
+    }
+
+    const atividade: RegistroAtividade = {
+      assistidoId: this.editingId,
+      tipoOcorrencia: this.novaAtividade.tipoOcorrencia || 'Outro',
+      descricao: this.novaAtividade.descricao,
+      envolveTerceiro: !!this.novaAtividade.envolveTerceiro,
+      nomeTerceiro: this.novaAtividade.nomeTerceiro,
+      contatoTerceiro: this.novaAtividade.contatoTerceiro,
+      dataOcorrencia: dataOc,
+      dataRegistro: Date.now(),
+      autorId: user?.uid || 'offline',
+      autorNome: user?.displayName || 'Anônimo'
+    };
+
+    try {
+      await this.atividadesService.save(atividade);
+      this.showNovaAtividade = false;
+      this.novaAtividade = { tipoOcorrencia: 'Ocorrência interna - Escola', envolveTerceiro: false, descricao: '' };
+      this.dataOcorrenciaInput = new Date().toISOString().split('T')[0];
+      
+      // A atualização da lista local offline
+      const pending = await this.atividadesService.getLocalPending();
+      const offlineActs = pending.filter(a => a.assistidoId === this.editingId);
+      if (offlineActs.length > 0) {
+          // Só atualizamos visualmente com o q ta offline se precisar, mas getAtividadesByAssistido vai demorar a dar refresh offline.
+          // O Firebase tenta atualizar se online. Por garantia, damos reload.
+          this.carregarAtividades();
+      }
+
+      const alert = await this.alertController.create({ header: 'Sucesso', message: 'Atividade registrada!', buttons: ['OK']});
+      await alert.present();
+    } catch(e) {
+      console.error(e);
     }
   }
 

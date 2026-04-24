@@ -14,10 +14,20 @@
 
 <ion-content [fullscreen]="true">
   <div class="field-header">
-     <h3>Dados do Assistido</h3>
-     <p>Preencha os dados abaixo. O cadastro pode ser feito offline.</p>
+     <h3>{{ editingId ? 'Perfil do Assistido' : 'Novo Cadastro' }}</h3>
+     <p *ngIf="!editingId">Preencha os dados abaixo. O cadastro pode ser feito offline.</p>
+     
+     <ion-segment [(ngModel)]="currentSegment" mode="md" style="margin-top: 15px; background: rgba(255,255,255,0.15); border-radius: 8px; padding: 2px;" *ngIf="editingId">
+       <ion-segment-button value="dados" style="--color-checked: #fff; --color: rgba(255,255,255,0.7); --indicator-color: rgba(255,255,255,0.2);">
+         <ion-label style="font-weight: bold;">Dados</ion-label>
+       </ion-segment-button>
+       <ion-segment-button value="acompanhamento" style="--color-checked: #fff; --color: rgba(255,255,255,0.7); --indicator-color: rgba(255,255,255,0.2);">
+         <ion-label style="font-weight: bold;">Acompanhamento</ion-label>
+       </ion-segment-button>
+     </ion-segment>
   </div>
 
+  <div *ngIf="currentSegment === 'dados'">
   <div class="form-container">
     <div class="photo-upload-section">
       <div class="photo-placeholder" (click)="tirarFoto()" [style.cursor]="'pointer'" [style.background-image]="foto ? 'url(' + foto + ')' : 'none'" [class.has-photo]="!!foto">
@@ -83,6 +93,78 @@
         <p-button label="Salvar Alterações" icon="pi pi-check" [fluid]="true" size="large" (click)="salvarCadastro()"></p-button>
         <p-button *ngIf="editingId" label="Visualizar QR Code Atual" icon="pi pi-qrcode" [fluid]="true" severity="secondary" size="large" (click)="showQRCode = true; qrCodeData = editingId" styleClass="mt-3"></p-button>
       </div>
+    </div>
+  </div>
+  </div>
+
+  <div *ngIf="currentSegment === 'acompanhamento'">
+    <div class="form-container" style="margin-top: -20px; padding-top: 30px;">
+      <div style="display:flex; justify-content: space-between; align-items:center; margin-bottom: 20px;">
+        <div>
+          <h3 style="margin:0; font-weight: 800; color: var(--ion-color-primary); font-size: 18px;">Histórico</h3>
+          <p style="margin:5px 0 0 0; font-size: 13px; color: #666;">Acompanhamento escolar, moradia e família.</p>
+        </div>
+        <p-button icon="pi pi-plus" label="Novo" (click)="showNovaAtividade = true" size="small"></p-button>
+      </div>
+
+      <div *ngIf="atividades.length === 0" style="text-align: center; padding: 40px 20px; color: #999; background: #f9f9f9; border-radius: 15px; border: 1px dashed #ddd;">
+        <i class="pi pi-inbox" style="font-size: 30px; margin-bottom: 10px;"></i><br>
+        Nenhuma atividade registrada ainda.
+      </div>
+
+    <div class="atividades-list" style="display:flex; flex-direction:column; gap: 15px; padding: 0 20px;">
+      <p-card *ngFor="let act of atividades">
+        <div style="font-weight:bold; color:var(--ion-color-primary);">{{ act.tipoOcorrencia }}</div>
+        <div style="font-size:12px; color:#666; margin-bottom:10px;">
+           📅 Ocorrência: {{ act.dataOcorrencia | date:'dd/MM/yyyy' }} | Registrado por: {{ act.autorNome }}
+        </div>
+        <p style="white-space: pre-line; margin:0; font-size:14px;">{{ act.descricao }}</p>
+        <div *ngIf="act.envolveTerceiro" style="margin-top:10px; padding:10px; background:#f4f5f8; border-radius:8px; font-size:13px;">
+          <strong>Envolveu Terceiro:</strong> {{ act.nomeTerceiro }} <br>
+          <span *ngIf="act.contatoTerceiro"><strong>Contato:</strong> {{ act.contatoTerceiro }}</span>
+        </div>
+      </p-card>
+    </div>
+
+    <p-dialog [(visible)]="showNovaAtividade" [modal]="true" [style]="{ width: '90vw', maxWidth: '500px' }" header="Novo Registro">
+      <div class="organic-form p-fluid" style="margin-top: 15px;">
+        <div class="p-field">
+          <label>Data da Ocorrência</label>
+          <input pInputText type="date" [(ngModel)]="dataOcorrenciaInput" />
+        </div>
+        
+        <div class="p-field">
+          <label>Tipo de Registro</label>
+          <p-select [options]="opcoesAtividade" [(ngModel)]="novaAtividade.tipoOcorrencia" optionLabel="label" optionValue="value" [fluid]="true" appendTo="body"></p-select>
+        </div>
+
+        <div class="p-field">
+          <label>Descrição e Decisões</label>
+          <textarea pTextarea [(ngModel)]="novaAtividade.descricao" rows="4" placeholder="Descreva a atividade, comportamento, ou decisão tomada..."></textarea>
+        </div>
+
+        <div class="p-field-checkbox" style="margin-top:10px;">
+          <p-checkbox [(ngModel)]="novaAtividade.envolveTerceiro" [binary]="true" inputId="terceiro"></p-checkbox>
+          <label for="terceiro" style="margin-left: 8px;">Envolveu algum terceiro?</label>
+        </div>
+
+        <div *ngIf="novaAtividade.envolveTerceiro" style="margin-top:10px; display:flex; flex-direction:column; gap:10px; padding-left:15px; border-left: 2px solid var(--ion-color-primary);">
+          <p-floatLabel>
+            <input pInputText id="nomeTerceiro" [(ngModel)]="novaAtividade.nomeTerceiro" />
+            <label for="nomeTerceiro">Nome do Terceiro</label>
+          </p-floatLabel>
+          <p-floatLabel>
+            <input pInputText id="contatoTerceiro" [(ngModel)]="novaAtividade.contatoTerceiro" />
+            <label for="contatoTerceiro">Contato do Terceiro</label>
+          </p-floatLabel>
+        </div>
+
+        <div style="margin-top:20px; display:flex; gap:10px; justify-content: flex-end;">
+          <p-button label="Cancelar" severity="secondary" [text]="true" (click)="showNovaAtividade = false"></p-button>
+          <p-button label="Salvar Registro" (click)="salvarAtividade()"></p-button>
+        </div>
+      </div>
+    </p-dialog>
     </div>
   </div>
 
